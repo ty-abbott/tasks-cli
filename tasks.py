@@ -1,5 +1,5 @@
 import sys
-
+import sqlite3
 '''
 This will be a basic command line tool for managing tasks/To Dos
 
@@ -10,26 +10,32 @@ Add can also just be given the task name as an argument and then it will add to 
 
 
 '''
-try: 
+try:
+    con = sqlite3.connect("tasks.db")
+
     def printHelp():
         print("This is meant to be a script help screen")
         print("As we continue to update then this will change")
     
-    
-    def addTask(arg2):
-        if (arg2 == ""):
-            input("What task would you like to add?")
-    
-    def completeTask():
-    #print the list of tasks - there should be an id number associated with each of the tasks that should be printed first. 
-        input("What task would you like to add")
-
     def listTask():
     #here is where we will list the tasks 
+        pass
 
+    def updateTask(arg2):
+        if (arg2 == ""):
+            listTask()
+            input("What task would you like to add?")
+             
+    def addTask(arg2):
+        if (arg2 == ""):
+            listTask()
+            input("What task would you like to add?")        
 
+    def completeTask():
+    #print the list of tasks - there should be an id number associated with each of the tasks that should be printed first. 
+        listTask()
+        input("What task would you like to complete?")
     
-
     arg1 = sys.argv[1]
     arg2 = sys.argv[2] if len(sys.argv) > 2 else ""
 
@@ -61,4 +67,4 @@ try:
 
 except Exception as e:
     print(e)
-    printHelp()
+    printHelp() #this wont be seen because it is outside of the try
