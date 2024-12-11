@@ -12,7 +12,10 @@ Add can also just be given the task name as an argument and then it will add to 
 '''
 try:
     con = sqlite3.connect("tasks.db")
-    #TODO:need to add the other stuff for sqlite here 
+    cursor = con.cursor()
+
+    sql_table = '''CREATE TABLE IF NOT EXISTS tasks(description TEXT)'''
+    cursor.execute(sql_table)
     def printHelp():
         print("This is meant to be a script help screen")
         print("As we continue to update then this will change")
@@ -29,11 +32,14 @@ try:
     def addTask(arg2):
         if (arg2 == ""):
             listTask()
-            task = input("What task would you like to add?")        
+            task = input("What task would you like to add? ")        
             if(task == ""):
                 printHelp()
-            else:
-            #TODO:create the sql statement and execute it here 
+            else: #adding a check to see if the task already exists
+                add_task = '''INSERT INTO tasks(description) VALUES(?)'''
+                cursor.execute(add_task, (task,))
+                con.commit()
+                con.close()
     def completeTask():
     #print the list of tasks - there should be an id number associated with each of the tasks that should be printed first. 
         listTask()
