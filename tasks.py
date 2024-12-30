@@ -20,14 +20,43 @@ try:
         print("This is meant to be a script help screen")
         print("As we continue to update then this will change")
     
+    def getTasks():
+        list_tasks = '''SELECT description FROM tasks'''
+        cursor.execute(list_tasks)
+
+        tasks = cursor.fetchall()
+
+        return tasks
+
+
     def listTask():
     #here is where we will list the tasks 
-        pass
+        tasks = getTasks()
+        for index, task in enumerate(tasks):
+            print(f"Task Number: {index}: {task[0]}")
 
     def updateTask(arg2):
         if (arg2 == ""):
             listTask()
-            input("What task would you like to add?")
+            taskIndex = input("What task would you like to update?")
+        else:
+            taskIndex = arg2
+        
+        newTask = input("What would you like to update the task to?")
+            
+        tasks = getTasks()
+        print(type(taskIndex))
+        task = tasks[int(taskIndex)][0]
+        print (task)
+        print(type(task))
+        update_sql = '''
+            UPDATE tasks
+            SET description = ?
+            WHERE description = ?
+            '''
+        cursor.execute(update_sql, (newTask, task))
+        con.commit()
+        con.close()
              
     def addTask(arg2):
         if (arg2 == ""):
@@ -43,7 +72,18 @@ try:
     def completeTask():
     #print the list of tasks - there should be an id number associated with each of the tasks that should be printed first. 
         listTask()
-        input("What task would you like to complete?")
+        taskIndex = input("What task would you like to complete?")
+        tasks = getTasks()
+        task = tasks[int(taskIndex)][0]
+        delete_sql = '''DELETE FROM tasks WHERE description = ?'''
+
+        cursor.execute(delete_sql, (task,))
+        con.commit()
+        con.close()
+
+        print(f"Task: {task} completed.")
+
+
     
     arg1 = sys.argv[1]
     arg2 = sys.argv[2] if len(sys.argv) > 2 else ""
@@ -60,7 +100,7 @@ try:
         updateTask(arg2)
 
     elif(arg1 == "list"):
-        listTasks()
+        listTask()
 
     else:
         printHelp()
@@ -76,4 +116,5 @@ try:
 
 except Exception as e:
     print(e)
+    con.close()
     printHelp() #this wont be seen because it is outside of the try
